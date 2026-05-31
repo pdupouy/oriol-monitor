@@ -1,0 +1,68 @@
+{
+  "config": {
+    "DIA_horas": 2,
+    "DIA_horas_nota": "GPT indicó 1h pero Humalog Junior tiene DIA 3-4h. Confirmar con médico.",
+    "tipo_insulina": "Humalog Junior",
+    "objetivo_glucosa_bajo": 90,
+    "objetivo_glucosa_alto": 120,
+    "objetivo_glucosa_target": 110,
+    "unidades": "mgdl",
+    "zona_horaria": "Europe/Madrid",
+    "avisar_padres_min": 5
+  },
+  "perfiles_bomba": {
+    "perfil_activo": "semana",
+    "semana": [
+      {"hora_inicio": "00:00", "hora_fin": "06:30", "basal": 0.6,  "ratio_IC": 12, "FSI": 70, "objetivo": 110},
+      {"hora_inicio": "06:30", "hora_fin": "08:30", "basal": 0.7,  "ratio_IC": 9,  "FSI": 70, "objetivo": 110},
+      {"hora_inicio": "08:30", "hora_fin": "10:30", "basal": 0.8,  "ratio_IC": 10, "FSI": 70, "objetivo": 110},
+      {"hora_inicio": "10:30", "hora_fin": "12:30", "basal": 0.75, "ratio_IC": 9,  "FSI": 70, "objetivo": 110},
+      {"hora_inicio": "12:30", "hora_fin": "13:30", "basal": 0.6,  "ratio_IC": 18, "FSI": 70, "objetivo": 110},
+      {"hora_inicio": "13:30", "hora_fin": "16:30", "basal": 0.6,  "ratio_IC": 30, "FSI": 70, "objetivo": 110},
+      {"hora_inicio": "16:30", "hora_fin": "22:00", "basal": 0.65, "ratio_IC": 14, "FSI": 70, "objetivo": 110},
+      {"hora_inicio": "22:00", "hora_fin": "24:00", "basal": 0.65, "ratio_IC": 12, "FSI": 70, "objetivo": 110}
+    ],
+    "finde": [
+      {"hora_inicio": "00:00", "hora_fin": "02:00", "basal": 0.77, "ratio_IC": 12, "FSI": 75, "objetivo": 110},
+      {"hora_inicio": "02:00", "hora_fin": "06:00", "basal": 0.82, "ratio_IC": 12, "FSI": 75, "objetivo": 110},
+      {"hora_inicio": "06:00", "hora_fin": "08:00", "basal": 0.77, "ratio_IC": 10, "FSI": 75, "objetivo": 110},
+      {"hora_inicio": "08:00", "hora_fin": "12:00", "basal": 0.58, "ratio_IC": 9,  "FSI": 80, "objetivo": 110},
+      {"hora_inicio": "12:00", "hora_fin": "16:00", "basal": 0.52, "ratio_IC": 16, "FSI": 85, "objetivo": 110},
+      {"hora_inicio": "16:00", "hora_fin": "22:00", "basal": 0.56, "ratio_IC": 16, "FSI": 80, "objetivo": 110},
+      {"hora_inicio": "22:00", "hora_fin": "24:00", "basal": 0.58, "ratio_IC": 14, "FSI": 75, "objetivo": 110}
+    ]
+  },
+  "horario": [
+    {"dia": "Lunes",    "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",         "techado": true},
+    {"dia": "Lunes",    "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
+    {"dia": "Lunes",    "inicio": "15:00", "fin": "17:00", "actividad": "educacion_fisica",  "techado": false},
+    {"dia": "Martes",   "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
+    {"dia": "Martes",   "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
+    {"dia": "Martes",   "inicio": "17:00", "fin": "18:45", "actividad": "basquet",           "techado": true},
+    {"dia": "Miercoles","inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
+    {"dia": "Miercoles","inicio": "11:30", "fin": "13:30", "actividad": "piscina",           "techado": true, "notas": "Cada 15 dias alternando semanas"},
+    {"dia": "Miercoles","inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
+    {"dia": "Jueves",   "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
+    {"dia": "Jueves",   "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
+    {"dia": "Jueves",   "inicio": "17:00", "fin": "18:45", "actividad": "basquet",           "techado": true},
+    {"dia": "Viernes",  "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
+    {"dia": "Viernes",  "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true}
+  ],
+  "menu": [
+    {"fecha": "2026-06-01", "tipo": "comida", "descripcion": "200g Crema carbassó; Lluç planxa 70g arròs; fruita",               "HC_g": 43, "proteina_g": 25, "grasa_g": 8},
+    {"fecha": "2026-06-02", "tipo": "comida", "descripcion": "200g Arròs muntanya carn xampinyons; Truita 50g patates; fruita",   "HC_g": 73, "proteina_g": 22, "grasa_g": 10},
+    {"fecha": "2026-06-03", "tipo": "comida", "descripcion": "200g Tricolor verdures; Pizza pernil formatge; fruita",             "HC_g": 60, "proteina_g": 18, "grasa_g": 14},
+    {"fecha": "2026-06-04", "tipo": "comida", "descripcion": "200g Llenties estofades; Pollastre arrebossat; iogurt",             "HC_g": 48, "proteina_g": 30, "grasa_g": 8},
+    {"fecha": "2026-06-05", "tipo": "comida", "descripcion": "200g Fideus cassola; 200g Cigrons saltejats verdures; fruita",      "HC_g": 89, "proteina_g": 20, "grasa_g": 10},
+    {"fecha": "2026-06-08", "tipo": "comida", "descripcion": "25g Mongeta tendra 75g patates; Pollastre romaní; fruita",          "HC_g": 29, "proteina_g": 28, "grasa_g": 8},
+    {"fecha": "2026-06-09", "tipo": "comida", "descripcion": "200g Arròs salsa tomàquet; Lluç al forn; fruita",                   "HC_g": 65, "proteina_g": 22, "grasa_g": 6},
+    {"fecha": "2026-06-10", "tipo": "comida", "descripcion": "200g Cigrons estofats verdures; Truita 50g patata; iogurt",         "HC_g": 51, "proteina_g": 20, "grasa_g": 10},
+    {"fecha": "2026-06-11", "tipo": "comida", "descripcion": "200g Pasta amanida pernil; Mandonguilles vedella; 20g pa; fruita",  "HC_g": 70, "proteina_g": 25, "grasa_g": 12},
+    {"fecha": "2026-06-12", "tipo": "comida", "descripcion": "200g Crema verdures; 200g Amanida llenties arròs; fruita",          "HC_g": 55, "proteina_g": 18, "grasa_g": 8},
+    {"fecha": "2026-06-15", "tipo": "comida", "descripcion": "200g Amanida russa; Remanat ou pernil; 20g pa; fruita",             "HC_g": 47, "proteina_g": 20, "grasa_g": 14},
+    {"fecha": "2026-06-16", "tipo": "comida", "descripcion": "200g Vichyssoise; Pernilets pollastre 70g patates; fruita",         "HC_g": 41, "proteina_g": 28, "grasa_g": 10},
+    {"fecha": "2026-06-17", "tipo": "comida", "descripcion": "200g Cigrons amanida; Lluç arrebossat; iogurt",                    "HC_g": 46, "proteina_g": 22, "grasa_g": 10},
+    {"fecha": "2026-06-18", "tipo": "comida", "descripcion": "200g Paella verdures; Botifarra 70g mongetes; fruita",              "HC_g": 58, "proteina_g": 22, "grasa_g": 14},
+    {"fecha": "2026-06-19", "tipo": "comida", "descripcion": "200g Macarrons napolitana; 5u Croquetes pernil; gelat",             "HC_g": 91, "proteina_g": 18, "grasa_g": 16}
+  ]
+}
