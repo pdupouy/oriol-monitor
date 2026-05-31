@@ -642,4 +642,3 @@ cron.schedule('* * * * *', async () => {
 
 console.log('âœ… LEO activo â€” Playbook Maestro Oriol integrado');
 console.log(`Perfil: ${isWeekend() ? 'FINDE' : 'SEMANA'} | Recordatorios: ${REMINDER_TIMES.join(', ')}`);
-
