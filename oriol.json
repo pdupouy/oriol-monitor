@@ -87,7 +87,8 @@
       {"nombre": "🍌 Plátano",            "HC_g": 23, "prot_g": 1,  "grasa_g": 0,  "split": null},
       {"nombre": "🥣 Leche + cereales",   "HC_g": 45, "prot_g": 8,  "grasa_g": 5,  "split": null},
       {"nombre": "🍞 Tostada + aceite",   "HC_g": 28, "prot_g": 3,  "grasa_g": 8,  "split": null}
-    ],
+      {"nombre": "📝 Otro (indicar HC)", "HC_g": -1, "prot_g": 0, "grasa_g": 0, "split": null}
+ ],
     "esmorzar": [
       {"nombre": "🥩 Bocata jamón",            "HC_g": 45, "prot_g": 15, "grasa_g": 5,  "split": "60/40", "notas": "50/50 si hay patio"},
       {"nombre": "🥩🧀 Bocata jamón+queso",    "HC_g": 45, "prot_g": 18, "grasa_g": 10, "split": "60/40", "notas": "50/50 si hay patio"},
@@ -95,14 +96,16 @@
       {"nombre": "🐟 Bocata atún",             "HC_g": 45, "prot_g": 20, "grasa_g": 5,  "split": "50/50", "notas": "Siempre más extendido"},
       {"nombre": "🌭 Bocata butifarra",        "HC_g": 45, "prot_g": 15, "grasa_g": 8,  "split": "60/40", "notas": "50/50 si hay patio"},
       {"nombre": "⚠️ Bocata Nutella",          "HC_g": 53, "prot_g": 5,  "grasa_g": 18, "split": "NUTELLA", "notas": "CRÍTICO — bolo especial"}
-    ],
+      {"nombre": "📝 Otro bocata (indicar HC)", "HC_g": -1, "prot_g": 0, "grasa_g": 0, "split": null}
+  ],
     "merienda": [
       {"nombre": "🍫 Barrita cereales",   "HC_g": 25, "prot_g": 3,  "grasa_g": 5,  "split": null},
       {"nombre": "🍩 Berlina / Dónut",   "HC_g": 35, "prot_g": 4,  "grasa_g": 12, "split": "50/50", "notas": "Alta grasa — extendido"},
       {"nombre": "🍌 Fruta",             "HC_g": 20, "prot_g": 1,  "grasa_g": 0,  "split": null},
       {"nombre": "🥛 Yogur + cereales",  "HC_g": 35, "prot_g": 8,  "grasa_g": 3,  "split": null},
       {"nombre": "🍞 Pan con algo",      "HC_g": 30, "prot_g": 5,  "grasa_g": 5,  "split": null}
-    ],
+      {"nombre": "📝 Otro (indicar HC)", "HC_g": -1, "prot_g": 0, "grasa_g": 0, "split": null}
+   ],
     "cena": [
       {"nombre": "🍗 Proteína + verdura", "HC_g": 0,  "prot_g": 30, "grasa_g": 8,  "split": null, "notas": "Sin HC — sin bolo de comida"},
       {"nombre": "🥩 Carne + ensalada",   "HC_g": 0,  "prot_g": 28, "grasa_g": 10, "split": null, "notas": "Sin HC — sin bolo de comida"},
