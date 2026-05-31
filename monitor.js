@@ -203,7 +203,7 @@ function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selecte
   };
 }
 
-ffunction buildBolusText(b, carbsG) {
+function buildBolusText(b, carbsG) {
   if (!b)        return '⚠️ Sin glucosa reciente — calcula manualmente';
   if (b.blocked) return b.warnings[0];
 
