@@ -177,7 +177,6 @@ function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selecte
   const extMin = selectedFood.extension_min || (ext > 0 ? 120 : 0);
 
   return {
-    ...// resto igual
     splitAdvice: ext > 0 ? `⏱️ <b>${upU}U ahora</b> (${up}%) + <b>${extU}U extendidos</b> (${ext}%)` : null,
     extensionMin: extMin,
     splitUp: up,
