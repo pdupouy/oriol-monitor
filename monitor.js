@@ -177,11 +177,14 @@ function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selecte
   const extMin = selectedFood.extension_min || (ext > 0 ? 120 : 0);
 
   return {
-    splitAdvice: ext > 0 ? `⏱️ <b>${upU}U ahora</b> (${up}%) + <b>${extU}U extendidos</b> (${ext}%)` : null,
-    extensionMin: extMin,
-    splitUp: up,
-    splitExt: ext,
-  };
+     splitAdvice = ext > 0
+    ? `⏱️ <b>${upU}U ahora</b> (${up}%) + <b>${extU}U extendidos</b> (${ext}%)`
+    : null;
+
+  var extensionMin = extMin;
+  var splitUp = up;
+  var splitExt = ext;
+}
 }
 
   // Alta grasa en otras comidas (berlina, dÃ³nut)
@@ -196,7 +199,7 @@ function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selecte
     meal:    Math.round(meal * 100) / 100,
     corr:    Math.round(corr * 100) / 100,
     iobD:    Math.round(iobD * 100) / 100,
-    ratio, semaforo, splitAdvice,
+    ratio,semaforo,splitAdvice,extensionMin,splitUp,splitExt,
     warnings: warns, notes, blocked: false,
     prot:  selectedFood?.prot_g  || 0,
     grasa: selectedFood?.grasa_g || 0
