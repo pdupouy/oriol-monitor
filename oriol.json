@@ -1,6 +1,6 @@
 {
   "config": {
-    "DIA_horas": 2,
+    "DIA_horas": 4,
     "DIA_horas_nota": "GPT indicó 1h pero Humalog Junior tiene DIA 3-4h. Confirmar con médico.",
     "tipo_insulina": "Humalog Junior",
     "objetivo_glucosa_bajo": 90,
@@ -32,37 +32,102 @@
       {"hora_inicio": "22:00", "hora_fin": "24:00", "basal": 0.58, "ratio_IC": 14, "FSI": 75, "objetivo": 110}
     ]
   },
+  "bocata_config": {
+    "ratio_clave": 8.5,
+    "nota": "Ratio específico del bocata — más agresivo que el perfil general (Playbook Maestro)"
+  },
   "horario": [
-    {"dia": "Lunes",    "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",         "techado": true},
-    {"dia": "Lunes",    "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
-    {"dia": "Lunes",    "inicio": "15:00", "fin": "17:00", "actividad": "educacion_fisica",  "techado": false},
-    {"dia": "Martes",   "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
-    {"dia": "Martes",   "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
-    {"dia": "Martes",   "inicio": "17:00", "fin": "18:45", "actividad": "basquet",           "techado": true},
-    {"dia": "Miercoles","inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
-    {"dia": "Miercoles","inicio": "11:30", "fin": "13:30", "actividad": "piscina",           "techado": true, "notas": "Cada 15 dias alternando semanas"},
-    {"dia": "Miercoles","inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
-    {"dia": "Jueves",   "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
-    {"dia": "Jueves",   "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true},
-    {"dia": "Jueves",   "inicio": "17:00", "fin": "18:45", "actividad": "basquet",           "techado": true},
-    {"dia": "Viernes",  "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",          "techado": true},
-    {"dia": "Viernes",  "inicio": "13:30", "fin": "15:00", "actividad": "menjador",          "techado": true}
+    {"dia": "Lunes",     "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",        "techado": true},
+    {"dia": "Lunes",     "inicio": "13:30", "fin": "15:00", "actividad": "menjador",         "techado": true},
+    {"dia": "Lunes",     "inicio": "15:00", "fin": "17:00", "actividad": "educacion_fisica", "techado": false},
+    {"dia": "Martes",    "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",         "techado": true},
+    {"dia": "Martes",    "inicio": "13:30", "fin": "15:00", "actividad": "menjador",         "techado": true},
+    {"dia": "Martes",    "inicio": "17:00", "fin": "18:45", "actividad": "basquet",          "techado": true},
+    {"dia": "Miercoles", "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",         "techado": true},
+    {"dia": "Miercoles", "inicio": "11:30", "fin": "13:30", "actividad": "piscina",          "techado": true, "notas": "Cada 15 dias alternando semanas"},
+    {"dia": "Miercoles", "inicio": "13:30", "fin": "15:00", "actividad": "menjador",         "techado": true},
+    {"dia": "Jueves",    "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",         "techado": true},
+    {"dia": "Jueves",    "inicio": "13:30", "fin": "15:00", "actividad": "menjador",         "techado": true},
+    {"dia": "Jueves",    "inicio": "17:00", "fin": "18:45", "actividad": "basquet",          "techado": true},
+    {"dia": "Viernes",   "inicio": "11:00", "fin": "11:30", "actividad": "esmorzar",         "techado": true},
+    {"dia": "Viernes",   "inicio": "13:30", "fin": "15:00", "actividad": "menjador",         "techado": true}
   ],
+  "fruta_hc": {
+    "manzana":   15,
+    "pera":      15,
+    "platano":   23,
+    "mandarina": 12,
+    "naranja":   20,
+    "uvas":      18,
+    "melocoton": 12,
+    "fresa":      8
+  },
   "menu": [
-    {"fecha": "2026-06-01", "tipo": "comida", "descripcion": "200g Crema carbassó; Lluç planxa 70g arròs; fruita",               "HC_g": 43, "proteina_g": 25, "grasa_g": 8},
-    {"fecha": "2026-06-02", "tipo": "comida", "descripcion": "200g Arròs muntanya carn xampinyons; Truita 50g patates; fruita",   "HC_g": 73, "proteina_g": 22, "grasa_g": 10},
-    {"fecha": "2026-06-03", "tipo": "comida", "descripcion": "200g Tricolor verdures; Pizza pernil formatge; fruita",             "HC_g": 60, "proteina_g": 18, "grasa_g": 14},
-    {"fecha": "2026-06-04", "tipo": "comida", "descripcion": "200g Llenties estofades; Pollastre arrebossat; iogurt",             "HC_g": 48, "proteina_g": 30, "grasa_g": 8},
-    {"fecha": "2026-06-05", "tipo": "comida", "descripcion": "200g Fideus cassola; 200g Cigrons saltejats verdures; fruita",      "HC_g": 89, "proteina_g": 20, "grasa_g": 10},
-    {"fecha": "2026-06-08", "tipo": "comida", "descripcion": "25g Mongeta tendra 75g patates; Pollastre romaní; fruita",          "HC_g": 29, "proteina_g": 28, "grasa_g": 8},
-    {"fecha": "2026-06-09", "tipo": "comida", "descripcion": "200g Arròs salsa tomàquet; Lluç al forn; fruita",                   "HC_g": 65, "proteina_g": 22, "grasa_g": 6},
-    {"fecha": "2026-06-10", "tipo": "comida", "descripcion": "200g Cigrons estofats verdures; Truita 50g patata; iogurt",         "HC_g": 51, "proteina_g": 20, "grasa_g": 10},
-    {"fecha": "2026-06-11", "tipo": "comida", "descripcion": "200g Pasta amanida pernil; Mandonguilles vedella; 20g pa; fruita",  "HC_g": 70, "proteina_g": 25, "grasa_g": 12},
-    {"fecha": "2026-06-12", "tipo": "comida", "descripcion": "200g Crema verdures; 200g Amanida llenties arròs; fruita",          "HC_g": 55, "proteina_g": 18, "grasa_g": 8},
-    {"fecha": "2026-06-15", "tipo": "comida", "descripcion": "200g Amanida russa; Remanat ou pernil; 20g pa; fruita",             "HC_g": 47, "proteina_g": 20, "grasa_g": 14},
-    {"fecha": "2026-06-16", "tipo": "comida", "descripcion": "200g Vichyssoise; Pernilets pollastre 70g patates; fruita",         "HC_g": 41, "proteina_g": 28, "grasa_g": 10},
-    {"fecha": "2026-06-17", "tipo": "comida", "descripcion": "200g Cigrons amanida; Lluç arrebossat; iogurt",                    "HC_g": 46, "proteina_g": 22, "grasa_g": 10},
-    {"fecha": "2026-06-18", "tipo": "comida", "descripcion": "200g Paella verdures; Botifarra 70g mongetes; fruita",              "HC_g": 58, "proteina_g": 22, "grasa_g": 14},
-    {"fecha": "2026-06-19", "tipo": "comida", "descripcion": "200g Macarrons napolitana; 5u Croquetes pernil; gelat",             "HC_g": 91, "proteina_g": 18, "grasa_g": 16}
-  ]
+    {"fecha": "2026-06-01", "tipo": "comida", "descripcion": "200g Crema carbassó; Lluç planxa 70g arròs; fruita",              "HC_g": 43, "proteina_g": 25, "grasa_g": 8},
+    {"fecha": "2026-06-02", "tipo": "comida", "descripcion": "200g Arròs muntanya carn xampinyons; Truita 50g patates; fruita", "HC_g": 73, "proteina_g": 22, "grasa_g": 10},
+    {"fecha": "2026-06-03", "tipo": "comida", "descripcion": "200g Tricolor verdures; Pizza pernil formatge; fruita",           "HC_g": 60, "proteina_g": 18, "grasa_g": 14},
+    {"fecha": "2026-06-04", "tipo": "comida", "descripcion": "200g Llenties estofades; Pollastre arrebossat; iogurt",           "HC_g": 48, "proteina_g": 30, "grasa_g": 8},
+    {"fecha": "2026-06-05", "tipo": "comida", "descripcion": "200g Fideus cassola; 200g Cigrons saltejats verdures; fruita",    "HC_g": 89, "proteina_g": 20, "grasa_g": 10},
+    {"fecha": "2026-06-08", "tipo": "comida", "descripcion": "25g Mongeta tendra 75g patates; Pollastre romaní; fruita",        "HC_g": 29, "proteina_g": 28, "grasa_g": 8},
+    {"fecha": "2026-06-09", "tipo": "comida", "descripcion": "200g Arròs salsa tomàquet; Lluç al forn; fruita",                 "HC_g": 65, "proteina_g": 22, "grasa_g": 6},
+    {"fecha": "2026-06-10", "tipo": "comida", "descripcion": "200g Cigrons estofats verdures; Truita 50g patata; iogurt",       "HC_g": 51, "proteina_g": 20, "grasa_g": 10},
+    {"fecha": "2026-06-11", "tipo": "comida", "descripcion": "200g Pasta amanida pernil; Mandonguilles vedella; 20g pa; fruita","HC_g": 70, "proteina_g": 25, "grasa_g": 12},
+    {"fecha": "2026-06-12", "tipo": "comida", "descripcion": "200g Crema verdures; 200g Amanida llenties arròs; fruita",        "HC_g": 55, "proteina_g": 18, "grasa_g": 8},
+    {"fecha": "2026-06-15", "tipo": "comida", "descripcion": "200g Amanida russa; Remanat ou pernil; 20g pa; fruita",           "HC_g": 47, "proteina_g": 20, "grasa_g": 14},
+    {"fecha": "2026-06-16", "tipo": "comida", "descripcion": "200g Vichyssoise; Pernilets pollastre 70g patates; fruita",       "HC_g": 41, "proteina_g": 28, "grasa_g": 10},
+    {"fecha": "2026-06-17", "tipo": "comida", "descripcion": "200g Cigrons amanida; Lluç arrebossat; iogurt",                   "HC_g": 46, "proteina_g": 22, "grasa_g": 10},
+    {"fecha": "2026-06-18", "tipo": "comida", "descripcion": "200g Paella verdures; Botifarra 70g mongetes; fruita",            "HC_g": 58, "proteina_g": 22, "grasa_g": 14},
+    {"fecha": "2026-06-19", "tipo": "comida", "descripcion": "200g Macarrons napolitana; 5u Croquetes pernil; gelat",           "HC_g": 91, "proteina_g": 18, "grasa_g": 16}
+  ],
+  "comidas_rapidas": {
+    "desayuno": [
+      {"nombre": "🚫 Sin desayuno",      "HC_g": 0,  "prot_g": 0,  "grasa_g": 0,  "split": null},
+      {"nombre": "🧀 Queso solo",         "HC_g": 1,  "prot_g": 8,  "grasa_g": 9,  "split": null},
+      {"nombre": "🍎 Fruta pequeña",      "HC_g": 15, "prot_g": 0,  "grasa_g": 0,  "split": null},
+      {"nombre": "🍌 Plátano",            "HC_g": 23, "prot_g": 1,  "grasa_g": 0,  "split": null},
+      {"nombre": "🥣 Leche + cereales",   "HC_g": 45, "prot_g": 8,  "grasa_g": 5,  "split": null},
+      {"nombre": "🍞 Tostada + aceite",   "HC_g": 28, "prot_g": 3,  "grasa_g": 8,  "split": null}
+    ],
+    "esmorzar": [
+      {"nombre": "🥩 Bocata jamón",            "HC_g": 45, "prot_g": 15, "grasa_g": 5,  "split": "60/40", "notas": "50/50 si hay patio"},
+      {"nombre": "🥩🧀 Bocata jamón+queso",    "HC_g": 45, "prot_g": 18, "grasa_g": 10, "split": "60/40", "notas": "50/50 si hay patio"},
+      {"nombre": "🧀 Bocata queso",            "HC_g": 45, "prot_g": 12, "grasa_g": 8,  "split": "60/40", "notas": "40/60 día rojo"},
+      {"nombre": "🐟 Bocata atún",             "HC_g": 45, "prot_g": 20, "grasa_g": 5,  "split": "50/50", "notas": "Siempre más extendido"},
+      {"nombre": "🌭 Bocata butifarra",        "HC_g": 45, "prot_g": 15, "grasa_g": 8,  "split": "60/40", "notas": "50/50 si hay patio"},
+      {"nombre": "⚠️ Bocata Nutella",          "HC_g": 53, "prot_g": 5,  "grasa_g": 18, "split": "NUTELLA", "notas": "CRÍTICO — bolo especial"}
+    ],
+    "merienda": [
+      {"nombre": "🍫 Barrita cereales",   "HC_g": 25, "prot_g": 3,  "grasa_g": 5,  "split": null},
+      {"nombre": "🍩 Berlina / Dónut",   "HC_g": 35, "prot_g": 4,  "grasa_g": 12, "split": "50/50", "notas": "Alta grasa — extendido"},
+      {"nombre": "🍌 Fruta",             "HC_g": 20, "prot_g": 1,  "grasa_g": 0,  "split": null},
+      {"nombre": "🥛 Yogur + cereales",  "HC_g": 35, "prot_g": 8,  "grasa_g": 3,  "split": null},
+      {"nombre": "🍞 Pan con algo",      "HC_g": 30, "prot_g": 5,  "grasa_g": 5,  "split": null}
+    ],
+    "cena": [
+      {"nombre": "🍗 Proteína + verdura", "HC_g": 0,  "prot_g": 30, "grasa_g": 8,  "split": null, "notas": "Sin HC — sin bolo de comida"},
+      {"nombre": "🥩 Carne + ensalada",   "HC_g": 0,  "prot_g": 28, "grasa_g": 10, "split": null, "notas": "Sin HC — sin bolo de comida"},
+      {"nombre": "🐟 Pescado + verdura",  "HC_g": 0,  "prot_g": 25, "grasa_g": 5,  "split": null, "notas": "Sin HC — sin bolo de comida"},
+      {"nombre": "🍳 Tortilla patatas",   "HC_g": 20, "prot_g": 12, "grasa_g": 10, "split": null},
+      {"nombre": "📝 Excepción — indicar HC", "HC_g": -1, "prot_g": 0, "grasa_g": 0, "split": null}
+    ]
+  },
+  "semaforo_reglas": {
+    "rojo": {
+      "glucosa_max": 80,
+      "o_tendencia_bajando_con_glucosa_max": 90,
+      "protocolo": "PROTECCIÓN TOTAL — sin prebolo, menos upfront, más extendido",
+      "split_bocata": "40/60"
+    },
+    "amarillo": {
+      "glucosa_min": 80,
+      "glucosa_max": 100,
+      "protocolo": "Prudencia — reducir upfront",
+      "split_bocata": "50/50"
+    },
+    "verde": {
+      "glucosa_min": 100,
+      "protocolo": "Cálculo normal",
+      "split_bocata": "60/40"
+    }
+  }
 }
