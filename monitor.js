@@ -356,8 +356,10 @@ function addPoints(uid, name, n) {
 // ── ESTIMACIÓN IA (Anthropic Claude Haiku) ───────────────────────────
 
 async function estimateFoodWithAI(descripcion, mealType) {
-  const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return null;
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  method:  'POST',
+  signal:  AbortSignal.timeout(8000),
+  headers: {
 
  const prompt = `Eres nutricionista especializado en diabetes tipo 1 pediátrica.
 Oriol es un adolescente de ~13 años con bomba Tandem t:slim.
@@ -404,10 +406,11 @@ Referencia para extension_min:
     const texto = data.content?.[0]?.text || '';
     const clean = texto.replace(/```json|```/g, '').trim();
     return JSON.parse(clean);
-  } catch (e) {
-    console.error('AI error:', e.message);
-    return null;
-  }
+} catch (e) {
+  console.error('AI error:', e.message);
+  await sendTG('⚠️ No pude analizar la comida. Escribe los gramos de HC directamente (ej: <b>45</b>)');
+  return null;
+}
 }
 
 
