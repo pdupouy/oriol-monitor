@@ -88,7 +88,7 @@
       {"nombre": "🥣 Leche + cereales",   "HC_g": 45, "prot_g": 8,  "grasa_g": 5,  "split": null},
       {"nombre": "🍞 Tostada + aceite",   "HC_g": 28, "prot_g": 3,  "grasa_g": 8,  "split": null}
       {"nombre": "📝 Otro (indicar HC)", "HC_g": -1, "prot_g": 0, "grasa_g": 0, "split": null}
- ],
+  ],
     "esmorzar": [
       {"nombre": "🥩 Bocata jamón",            "HC_g": 45, "prot_g": 15, "grasa_g": 5,  "split": "60/40", "notas": "50/50 si hay patio"},
       {"nombre": "🥩🧀 Bocata jamón+queso",    "HC_g": 45, "prot_g": 18, "grasa_g": 10, "split": "60/40", "notas": "50/50 si hay patio"},
