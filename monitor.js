@@ -159,7 +159,9 @@ function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selecte
   let total = Math.max(0, Math.round((meal + corr - iobD + tAdj + aAdj + semAdj) * 2) / 2);
 
   // Estrategia de bolo extendido
-  let splitAdvice = null;
+  let extensionMin = null;
+  let splitUp = null;
+  let splitExt = null;
 
   if (mealType === 'esmorzar' && selectedFood) {
     if (selectedFood.split === 'NUTELLA') {
@@ -174,19 +176,18 @@ function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selecte
   const extU = Math.round(total * (ext / 100) * 2) / 2;
 
   // Tiempo de extensión: del food si disponible, o 120min por defecto para bocata
-  const extMin = selectedFood.extension_min || (ext > 0 ? 120 : 0);
+const extMin = selectedFood.extension_min || (ext > 0 ? 120 : 0);
 
-  return {
-     splitAdvice = ext > 0
-    ? `⏱️ <b>${upU}U ahora</b> (${up}%) + <b>${extU}U extendidos</b> (${ext}%)`
-    : null;
+splitAdvice = ext > 0
+  ? `⏱️ <b>${upU}U ahora</b> (${up}%) + <b>${extU}U extendidos</b> (${ext}%)`
+  : null;
 
-  var extensionMin = extMin;
-  var splitUp = up;
-  var splitExt = ext;
+extensionMin = extMin;
+splitUp = up;
+splitExt = ext;
 }
 }
-
+  
   // Alta grasa en otras comidas (berlina, dÃ³nut)
   if ((selectedFood?.grasa_g || 0) > 10 && !splitAdvice && total > 0) {
     const upU  = Math.round(total * 0.6 * 2) / 2;
@@ -194,19 +195,26 @@ function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selecte
     splitAdvice = `â±ï¸ Alta grasa â†’ considera: <b>${upU}U ahora</b> + <b>${extU}U en 90min</b>`;
   }
 
-  return {
-    total,
-    meal:    Math.round(meal * 100) / 100,
-    corr:    Math.round(corr * 100) / 100,
-    iobD:    Math.round(iobD * 100) / 100,
-    ratio,semaforo,splitAdvice,extensionMin,splitUp,splitExt,
-    warnings: warns, notes, blocked: false,
-    prot:  selectedFood?.prot_g  || 0,
-    grasa: selectedFood?.grasa_g || 0
-  };
-}
+ return {
+  total,
+  meal: Math.round(meal * 100) / 100,
+  corr: Math.round(corr * 100) / 100,
+  iobD: Math.round(iobD * 100) / 100,
+  ratio,
+  semaforo,
+  splitAdvice,
+  extensionMin,
+  splitUp,
+  splitExt,
+  warnings: warns,
+  notes,
+  blocked: false,
+  prot: selectedFood?.prot_g || 0,
+  grasa: selectedFood?.grasa_g || 0
+};
+  }
 
-function buildBolusText(b, carbsG) {
+  function buildBolusText(b, carbsG) {
   if (!b)        return '⚠️ Sin glucosa reciente — calcula manualmente';
   if (b.blocked) return b.warnings[0];
 
