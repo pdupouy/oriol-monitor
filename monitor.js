@@ -90,7 +90,7 @@ function getActivityContext(hour) {
   return { upcoming, recent, duringAct };
 }
 
-// â”€â”€ CÃLCULO DE BOLO (Playbook Maestro) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ CÃLCULO DE BOLO (Playbook Maestro) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function calculateBolus(glucoseMgdl, trend, carbsG, iob, hour, mealType, selectedFood) {
   if (!glucoseMgdl) return null;
@@ -461,6 +461,38 @@ if (u.message?.text && waitingForInput) {
 }
 
     // Comando /puntos
+    if (u.message?.text === '/bolo') {
+  const glucose  = await getGlucose();
+  const semaforo = evaluateSemaforo(glucose?.sgv, glucose?.direction);
+  const hour     = new Date().getHours();
+  const mealType = getMealType(`${String(hour).padStart(2,'0')}:00`);
+  const gTxt     = glucose
+    ? `${semaforoEmoji(semaforo)} Glucosa: <b>${glucose.sgv} mg/dL</b> ${te(glucose.direction)}`
+    : '⚠️ Sin datos de glucosa recientes';
+
+  let text, kb, baseHC = 0;
+
+  if (mealType === 'comida') {
+    const menu = getTodayMenu();
+    baseHC = menu?.HC_g || 0;
+    text = `⚽ <b>LEO — Cálculo de bolo</b>\n${gTxt}\n\n` +
+           `🍽️ ${menu ? menu.descripcion : 'Sin menú registrado'}\n` +
+           `HC base: ~${baseHC}g\n\n¿Qué fruta o postre?`;
+    kb = buildFruitKeyboard();
+  } else {
+    text = `⚽ <b>LEO — Cálculo de bolo</b>\n${gTxt}\n\n¿Qué come Oriol?`;
+    kb   = buildFoodKeyboard(mealType);
+  }
+
+  const msgId = await sendTG(text, kb);
+  const key   = `manual_${Date.now()}`;
+  pending[key] = {
+    triggeredAt: new Date(), warned: false, resolved: false,
+    messageId: msgId, glucoseData: glucose, mealType, baseHC, semaforo
+  };
+  continue;
+}
+
     if (u.message?.text === '/puntos') {
       const msg = Object.keys(points).length === 0
         ? 'ðŸ† <b>Marcador LEO</b>\n\nÂ¡Confirma el primer bolo para empezar!'
