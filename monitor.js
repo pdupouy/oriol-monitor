@@ -356,61 +356,53 @@ function addPoints(uid, name, n) {
 // ── ESTIMACIÓN IA (Anthropic Claude Haiku) ───────────────────────────
 
 async function estimateFoodWithAI(descripcion, mealType) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-  method:  'POST',
-  signal:  AbortSignal.timeout(8000),
-  headers: {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) return null;
 
- const prompt = `Eres nutricionista especializado en diabetes tipo 1 pediátrica.
-Oriol es un adolescente de ~13 años con bomba Tandem t:slim.
-El cuidador describe esta comida: "${descripcion}"
-Momento: ${mealType}
-
-Estima los macronutrientes y la estrategia de bolo extendido.
-Responde ÚNICAMENTE con JSON válido, sin texto ni backticks:
-{
-  "descripcion": "descripción breve",
-  "HC_g": número,
-  "HC_min": número,
-  "HC_max": número,
-  "prot_g": número,
-  "grasa_g": número,
-  "velocidad": "rapida o lenta",
-  "split": "100/0 o 60/40 o 50/50 o 40/60",
-  "extension_min": número_entero_en_minutos_o_0_si_no_extendido,
-  "razon_split": "razón en menos de 8 palabras",
-  "confianza": 0.0
-}
-
-Referencia para extension_min:
-- Sin extensión (absorción rápida, poca grasa): 0
-- Grasa moderada o absorción media: 90
-- Alta grasa o absorción muy lenta: 120
-- Muy alta grasa (pizza, pasta con crema): 150-180`;
+  const promptText = 'Eres nutricionista especializado en diabetes tipo 1 pediatrica. ' +
+    'Oriol es un nino de ~10 anios con bomba Tandem t:slim. ' +
+    'El cuidador describe esta comida: "' + descripcion + '". ' +
+    'Momento del dia: ' + mealType + '. ' +
+    'Estima los macronutrientes y la estrategia de bolo extendido. ' +
+    'Responde UNICAMENTE con JSON valido, sin texto ni backticks: ' +
+    '{"descripcion":"texto breve",' +
+    '"HC_g":numero,' +
+    '"HC_min":numero,' +
+    '"HC_max":numero,' +
+    '"prot_g":numero,' +
+    '"grasa_g":numero,' +
+    '"velocidad":"rapida o lenta",' +
+    '"split":"100/0 o 60/40 o 50/50 o 40/60",' +
+    '"extension_min":numero,' +
+    '"razon_split":"razon breve",' +
+    '"confianza":numero}';
 
   try {
-    const res  = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:  'POST',
+      signal:  AbortSignal.timeout(8000),
       headers: {
-        'Content-Type':    'application/json',
-        'x-api-key':       key,
+        'Content-Type':      'application/json',
+        'x-api-key':         key,
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
         model:      'claude-haiku-4-5-20251001',
         max_tokens: 400,
-        messages:   [{ role: 'user', content: prompt }]
+        messages:   [{ role: 'user', content: promptText }]
       })
     });
+
     const data  = await res.json();
-    const texto = data.content?.[0]?.text || '';
+    const texto = data.content && data.content[0] ? data.content[0].text : '';
     const clean = texto.replace(/```json|```/g, '').trim();
     return JSON.parse(clean);
-} catch (e) {
-  console.error('AI error:', e.message);
-  await sendTG('⚠️ No pude analizar la comida. Escribe los gramos de HC directamente (ej: <b>45</b>)');
-  return null;
-}
+
+  } catch (e) {
+    console.error('AI error:', e.message);
+    await sendTG('No pude analizar la comida. Escribe los gramos de HC directamente (ej: 45)');
+    return null;
+  }
 }
 
 
