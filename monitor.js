@@ -283,15 +283,16 @@ const CONFIRM_KB = { inline_keyboard: [
 // â”€â”€ TELEGRAM HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function nsH() {
-  return { 'api-secret': crypto.createHash('sha1').update(NS_SECRET).digest('hex'), 'Content-Type': 'application/json' };
+  return { 'api-secret': crypto.createHash('sha1').update(NS_SECRET).digest('hex'), 'Content-Type': 'application/json; charset=utf-8' };
 }
+
 
 async function sendTG(text, kb = null) {
   try {
     const b = { chat_id: CHAT_ID, text, parse_mode: 'HTML' };
     if (kb) b.reply_markup = kb;
     const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b)
+      method: 'POST', headers: headers: {'Content-Type': 'application/json; charset=utf-8'}, body: JSON.stringify(b)
     });
     return (await r.json()).result?.message_id;
   } catch (e) { return null; }
@@ -302,7 +303,7 @@ async function editTG(mid, text, kb = null) {
     const b = { chat_id: CHAT_ID, message_id: mid, text, parse_mode: 'HTML' };
     if (kb) b.reply_markup = kb;
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/editMessageText`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(b)
+      method: 'POST', headers: headers: {'Content-Type': 'application/json; charset=utf-8'}, body: JSON.stringify(b)
     });
   } catch (e) {}
 }
@@ -359,7 +360,7 @@ async function estimateFoodWithAI(descripcion, mealType) {
   if (!key) return null;
 
  const prompt = `Eres nutricionista especializado en diabetes tipo 1 pediátrica.
-Oriol es un niño de ~10 años con bomba Tandem t:slim.
+Oriol es un adolescente de ~13 años con bomba Tandem t:slim.
 El cuidador describe esta comida: "${descripcion}"
 Momento: ${mealType}
 
