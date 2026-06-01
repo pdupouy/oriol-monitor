@@ -292,7 +292,7 @@ async function sendTG(text, kb = null) {
     const b = { chat_id: CHAT_ID, text, parse_mode: 'HTML' };
     if (kb) b.reply_markup = kb;
     const r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: 'POST', headers: headers: {'Content-Type': 'application/json; charset=utf-8'}, body: JSON.stringify(b)
+      method: 'POST', headers: {'Content-Type': 'application/json; charset=utf-8'}, body: JSON.stringify(b)
     });
     return (await r.json()).result?.message_id;
   } catch (e) { return null; }
@@ -303,7 +303,7 @@ async function editTG(mid, text, kb = null) {
     const b = { chat_id: CHAT_ID, message_id: mid, text, parse_mode: 'HTML' };
     if (kb) b.reply_markup = kb;
     await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/editMessageText`, {
-      method: 'POST', headers: headers: {'Content-Type': 'application/json; charset=utf-8'}, body: JSON.stringify(b)
+      method: 'POST', headers: {'Content-Type': 'application/json; charset=utf-8'}, body: JSON.stringify(b)
     });
   } catch (e) {}
 }
