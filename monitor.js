@@ -6,8 +6,6 @@ const fetch  = require('node-fetch');
 const crypto = require('crypto');
 const oriol  = require('./oriol.json');
 
-// ── CONFIG ───────────────────────────────────────────────────────────────
-
 const BOT_TOKEN      = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID        = process.env.TELEGRAM_CHAT_ID;
 const NS_URL         = process.env.NS_URL;
@@ -17,8 +15,6 @@ const PORT           = parseInt(process.env.PORT || '3000');
 const REMINDER_TIMES = (process.env.REMINDER_TIMES || '08:15,11:00,14:00,17:00,20:30').split(',');
 const WINDOW_MIN     = parseInt(process.env.BOLUS_WINDOW_MINUTES || '25');
 const WARN_MIN       = parseInt(process.env.WARN_AFTER_MINUTES   || '5');
-
-// ── EMOJIS (Unicode puro - sin problemas de codificacion) ────────────────
 
 const E = {
   soccer:  '\u26BD',
@@ -40,9 +36,6 @@ const E = {
   pencil:  '\uD83D\uDCDD',
   info:    '\u2139\uFE0F',
   run:     '\uD83C\uDFC3',
-  arrow_u: '\u2191',
-  arrow_d: '\u2193',
-  arrow_r: '\u2192',
 };
 
 const FOOTBALL = [
@@ -53,25 +46,26 @@ const FOOTBALL = [
   E.glove  + ' Porterazo! Te has gestionado solo.',
 ];
 
-// ── ESTADO ───────────────────────────────────────────────────────────────
-
 const points     = {};
 const pending    = {};
 let waitingInput = null;
 
-// ── HELPERS ──────────────────────────────────────────────────────────────
-
 function semEmo(s) {
-  return { verde: E.green, amarillo: E.yellow, rojo: E.red }[s] || E.white;
+  if (s === 'verde')    return E.green;
+  if (s === 'amarillo') return E.yellow;
+  if (s === 'rojo')     return E.red;
+  return E.white;
 }
 
 function trendEmo(d) {
-  const m = {
-    DoubleUp: E.arrow_u+E.arrow_u, SingleUp: E.arrow_u, FortyFiveUp: '\u2197',
-    Flat: E.arrow_r,
-    FortyFiveDown: '\u2198', SingleDown: E.arrow_d, DoubleDown: E.arrow_d+E.arrow_d
-  };
-  return m[d] || E.arrow_r;
+  if (d === 'DoubleUp')      return '\u2191\u2191';
+  if (d === 'SingleUp')      return '\u2191';
+  if (d === 'FortyFiveUp')   return '\u2197';
+  if (d === 'Flat')          return '\u2192';
+  if (d === 'FortyFiveDown') return '\u2198';
+  if (d === 'SingleDown')    return '\u2193';
+  if (d === 'DoubleDown')    return '\u2193\u2193';
+  return '\u2192';
 }
 
 function fmtTime(iso) {
@@ -81,7 +75,7 @@ function fmtTime(iso) {
 }
 
 function addGoles(uid, name, n) {
-  if (!points[uid]) points[uid] = { name, total: 0 };
+  if (!points[uid]) points[uid] = { name: name, total: 0 };
   points[uid].total += n;
   return points[uid].total;
 }
@@ -90,44 +84,54 @@ function randFootball() {
   return FOOTBALL[Math.floor(Math.random() * FOOTBALL.length)];
 }
 
-// ── CONTEXTO ORIOL ───────────────────────────────────────────────────────
-
 function isWeekend() {
-  return [0, 6].includes(new Date().getDay());
+  var d = new Date().getDay();
+  return d === 0 || d === 6;
 }
 
 function getDayName() {
-  const days = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+  var days = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
   return days[new Date().getDay()];
 }
 
 function getTodayMenu() {
-  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
-  const found = oriol.menu.find(m => m.fecha === today);
-  console.log('[menu] fecha:', today, found ? 'OK' : 'no encontrado');
+  var today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+  var found = oriol.menu.find(function(m) { return m.fecha === today; });
+  console.log('[menu] fecha: ' + today + ' ' + (found ? 'OK' : 'no encontrado'));
   return found || null;
 }
 
 function getProfile(hour) {
-  const p = isWeekend() ? oriol.perfiles_bomba.finde : oriol.perfiles_bomba.semana;
-  return p.find(s => {
-    const i = parseInt(s.hora_inicio), f = parseInt(s.hora_fin);
+  var p = isWeekend() ? oriol.perfiles_bomba.finde : oriol.perfiles_bomba.semana;
+  var found = p.find(function(s) {
+    var i = parseInt(s.hora_inicio);
+    var f = parseInt(s.hora_fin);
     return f === 24 ? hour >= i : hour >= i && hour < f;
-  }) || p[0];
+  });
+  return found || p[0];
 }
 
 function getActivity(hour) {
-  const acts = oriol.horario.filter(h => h.dia === getDayName());
-  const phy  = ['educacion_fisica','basquet','piscina','futbol'];
+  var acts = oriol.horario.filter(function(h) { return h.dia === getDayName(); });
+  var phy  = ['educacion_fisica','basquet','piscina','futbol'];
   return {
-    upcoming: acts.find(a => { const h=parseInt(a.inicio); return phy.includes(a.actividad)&&h>hour&&h<=hour+3; }),
-    recent:   acts.find(a => { const h=parseInt(a.fin);    return phy.includes(a.actividad)&&h>=hour-2&&h<=hour; }),
-    during:   acts.find(a => { const s=parseInt(a.inicio),e=parseInt(a.fin); return phy.includes(a.actividad)&&hour>=s&&hour<=e; })
+    upcoming: acts.find(function(a) {
+      var h = parseInt(a.inicio);
+      return phy.indexOf(a.actividad) >= 0 && h > hour && h <= hour + 3;
+    }),
+    recent: acts.find(function(a) {
+      var h = parseInt(a.fin);
+      return phy.indexOf(a.actividad) >= 0 && h >= hour - 2 && h <= hour;
+    }),
+    during: acts.find(function(a) {
+      var s = parseInt(a.inicio), e = parseInt(a.fin);
+      return phy.indexOf(a.actividad) >= 0 && hour >= s && hour <= e;
+    })
   };
 }
 
 function getMealType(timeStr) {
-  const h = parseInt(timeStr);
+  var h = parseInt(timeStr);
   if (h < 10) return 'desayuno';
   if (h < 12) return 'esmorzar';
   if (h < 16) return 'comida';
@@ -135,107 +139,115 @@ function getMealType(timeStr) {
   return 'cena';
 }
 
-// ── SEMAFORO ─────────────────────────────────────────────────────────────
-
 function evalSem(gluc, trend) {
   if (!gluc) return 'desconocido';
-  const bajando = ['FortyFiveDown','SingleDown','DoubleDown'].includes(trend);
-  const rapido  = ['SingleDown','DoubleDown'].includes(trend);
-  if (gluc < 80)              return 'rojo';
-  if (gluc < 90 && rapido)    return 'rojo';
-  if (gluc < 100 && bajando)  return 'amarillo';
-  if (gluc < 100)             return 'amarillo';
+  var bajando = trend === 'FortyFiveDown' || trend === 'SingleDown' || trend === 'DoubleDown';
+  var rapido  = trend === 'SingleDown' || trend === 'DoubleDown';
+  if (gluc < 80)             return 'rojo';
+  if (gluc < 90 && rapido)   return 'rojo';
+  if (gluc < 100 && bajando) return 'amarillo';
+  if (gluc < 100)            return 'amarillo';
   return 'verde';
 }
-
-// ── CALCULO DE BOLO ──────────────────────────────────────────────────────
 
 function calcBolus(gluc, trend, hc, iob, hour, mealType, food) {
   if (!gluc) return null;
 
-  const sem    = evalSem(gluc, trend);
-  const prof   = getProfile(hour);
-  const act    = getActivity(hour);
-  const target = oriol.config.objetivo_glucosa_target || 110;
-  const warns  = [];
-  const notes  = [];
+  var sem    = evalSem(gluc, trend);
+  var prof   = getProfile(hour);
+  var act    = getActivity(hour);
+  var target = (oriol.config && oriol.config.objetivo_glucosa_target) ? oriol.config.objetivo_glucosa_target : 110;
+  var warns  = [];
+  var notes  = [];
 
   if (gluc < 70) {
     return {
-      total: 0, sem, blocked: true,
+      total: 0, sem: sem, blocked: true,
       warnings: [E.red + ' HIPOGLUCEMIA - NO insulina. Tratar con 10-15g HC.'],
       notes: [], splitAdvice: null, prot: 0, grasa: 0
     };
   }
 
-  // Ratio bocata
-  let ratio = prof.ratio_IC;
+  var ratio = prof.ratio_IC;
   if (mealType === 'esmorzar') {
-    ratio = oriol.bocata_config && oriol.bocata_config.ratio_clave ? oriol.bocata_config.ratio_clave : 8.5;
+    ratio = (oriol.bocata_config && oriol.bocata_config.ratio_clave) ? oriol.bocata_config.ratio_clave : 8.5;
     notes.push(E.info + ' Ratio bocata: 1:' + ratio);
   }
 
-  let corr = Math.max(0, (gluc - target) / prof.FSI);
-  let meal = hc > 0 ? hc / ratio : 0;
+  var corr = Math.max(0, (gluc - target) / prof.FSI);
+  var meal = hc > 0 ? hc / ratio : 0;
 
-  // Max 1U correccion en comida
   if (mealType === 'comida' && corr > 1) {
     corr = 1;
     notes.push(E.info + ' Correccion limitada a 1U');
   }
 
-  // Tendencia
-  const tMap = {DoubleUp:0.5,SingleUp:0.25,FortyFiveUp:0.1,Flat:0,FortyFiveDown:-0.1,SingleDown:-0.25,DoubleDown:-0.5};
-  const tAdj = tMap[trend] || 0;
+  var tMap = {
+    DoubleUp: 0.5, SingleUp: 0.25, FortyFiveUp: 0.1, Flat: 0,
+    FortyFiveDown: -0.1, SingleDown: -0.25, DoubleDown: -0.5
+  };
+  var tAdj = tMap[trend] || 0;
 
-  // Actividad
-  let aAdj = 0;
-  if      (act.during)   { aAdj=-0.5;  warns.push(E.run+' Durante actividad - valorar no bolear'); }
-  else if (act.upcoming) { aAdj=-0.3;  notes.push(E.run+' '+act.upcoming.actividad+' a las '+act.upcoming.inicio+' - reducido'); }
-  else if (act.recent)   { aAdj=-0.25; notes.push(E.run+' '+act.recent.actividad+' reciente - precaucion'); }
+  var aAdj = 0;
+  if (act.during) {
+    aAdj = -0.5;
+    warns.push(E.run + ' Durante actividad - valorar no bolear');
+  } else if (act.upcoming) {
+    aAdj = -0.3;
+    notes.push(E.run + ' ' + act.upcoming.actividad + ' a las ' + act.upcoming.inicio + ' - reducido');
+  } else if (act.recent) {
+    aAdj = -0.25;
+    notes.push(E.run + ' ' + act.recent.actividad + ' reciente - precaucion');
+  }
 
-  // Semaforo
-  let sAdj = 0;
-  if      (sem === 'rojo')     { sAdj=-0.5; warns.push(E.red+' DIA ROJO - PROTECCION TOTAL'); }
-  else if (sem === 'amarillo') { sAdj=-0.2; notes.push(E.yellow+' Glucosa en limite - prudencia'); }
+  var sAdj = 0;
+  if (sem === 'rojo') {
+    sAdj = -0.5;
+    warns.push(E.red + ' DIA ROJO - PROTECCION TOTAL');
+  } else if (sem === 'amarillo') {
+    sAdj = -0.2;
+    notes.push(E.yellow + ' Glucosa en limite - prudencia');
+  }
 
-  const iobD  = Math.min(iob || 0, corr + meal);
-  if ((iob||0) > 2) warns.push(E.warn+' IOB elevada - riesgo apilamiento');
+  var iobD  = Math.min(iob || 0, corr + meal);
+  if ((iob || 0) > 2) warns.push(E.warn + ' IOB elevada - riesgo apilamiento');
 
-  const total = Math.max(0, Math.round((meal + corr - iobD + tAdj + aAdj + sAdj) * 2) / 2);
+  var total = Math.max(0, Math.round((meal + corr - iobD + tAdj + aAdj + sAdj) * 2) / 2);
 
-  // Split / bolo extendido
-  let splitAdvice = null;
-  const foodSplit = food && food.split && food.split !== 'NUTELLA' ? food.split : null;
+  var splitAdvice = null;
+  var foodSplit   = (food && food.split && food.split !== 'NUTELLA') ? food.split : null;
 
   if (foodSplit && total > 0) {
-    let sp = foodSplit;
-    if      (sem === 'rojo')                     sp = '40/60';
-    else if (sem === 'amarillo' || act.upcoming) sp = '50/50';
+    var sp = foodSplit;
+    if (sem === 'rojo')                              sp = '40/60';
+    else if (sem === 'amarillo' || act.upcoming)     sp = '50/50';
 
-    const parts = sp.split('/').map(Number);
-    const up    = parts[0];
-    const ext   = parts[1];
-    const upU   = Math.round(total * up  / 100 * 2) / 2;
-    const extU  = Math.round(total * ext / 100 * 2) / 2;
-    const extMin = (food && food.extension_min) ? food.extension_min : 120;
-    splitAdvice  = E.clock + ' <b>'+upU+'U ahora</b> ('+up+'%) + <b>'+extU+'U en '+extMin+' min</b> ('+ext+'%)\n   Tandem: Extendido '+up+'/'+ext+'/'+extMin+'min';
-    if (food && food.notas && sem !== 'rojo') notes.push(E.info+' '+food.notas);
+    var parts  = sp.split('/').map(Number);
+    var up     = parts[0];
+    var ext    = parts[1];
+    var upU    = Math.round(total * up  / 100 * 2) / 2;
+    var extU   = Math.round(total * ext / 100 * 2) / 2;
+    var extMin = (food && food.extension_min) ? food.extension_min : 120;
+    splitAdvice = E.clock + ' <b>' + upU + 'U ahora</b> (' + up + '%) + <b>' + extU + 'U en ' + extMin + ' min</b> (' + ext + '%)\n   Tandem: Extendido ' + up + '/' + ext + '/' + extMin + 'min';
+    if (food && food.notas && sem !== 'rojo') notes.push(E.info + ' ' + food.notas);
 
   } else if (food && (food.grasa_g || 0) > 10 && total > 0) {
-    const upU  = Math.round(total * 0.6 * 2) / 2;
-    const extU = Math.round(total * 0.4 * 2) / 2;
-    splitAdvice = E.clock + ' Alta grasa: <b>'+upU+'U ahora</b> + <b>'+extU+'U en 90 min</b>\n   Tandem: Extendido 60/40/90min';
+    var upU2  = Math.round(total * 0.6 * 2) / 2;
+    var extU2 = Math.round(total * 0.4 * 2) / 2;
+    splitAdvice = E.clock + ' Alta grasa: <b>' + upU2 + 'U ahora</b> + <b>' + extU2 + 'U en 90 min</b>\n   Tandem: Extendido 60/40/90min';
   }
 
   return {
-    total,
-    meal:  Math.round(meal  * 100) / 100,
-    corr:  Math.round(corr  * 100) / 100,
-    iobD:  Math.round(iobD  * 100) / 100,
-    ratio, sem, splitAdvice,
-    warnings: warns, notes,
-    blocked: false,
+    total:  total,
+    meal:   Math.round(meal  * 100) / 100,
+    corr:   Math.round(corr  * 100) / 100,
+    iobD:   Math.round(iobD  * 100) / 100,
+    ratio:  ratio,
+    sem:    sem,
+    splitAdvice: splitAdvice,
+    warnings: warns,
+    notes:    notes,
+    blocked:  false,
     prot:  (food && food.prot_g)  || 0,
     grasa: (food && food.grasa_g) || 0
   };
@@ -245,37 +257,33 @@ function bolusText(b, hc) {
   if (!b)        return E.warn + ' Sin glucosa reciente - calcula manualmente';
   if (b.blocked) return b.warnings[0];
 
-  let t = semEmo(b.sem) + ' <b>Bolo sugerido: ' + b.total + ' U</b>';
-  if (hc > 0) t += ' para ' + hc + 'g HC';
+  var t = semEmo(b.sem) + ' <b>Bolo sugerido: ' + b.total + ' U</b>';
+  if (hc > 0)      t += ' para ' + hc + 'g HC';
   if (b.prot > 20) t += '\n' + E.warn + ' Alta proteina (' + b.prot + 'g) - puede subir en 2-3h';
   t += '\n<i>' + b.meal + 'U comida + ' + b.corr + 'U correccion - ' + b.iobD + 'U IOB</i>';
   if (b.splitAdvice)          t += '\n\n' + b.splitAdvice;
-  b.warnings.forEach(w =>      t += '\n' + w);
-  b.notes.forEach(n =>         t += '\n' + n);
+  b.warnings.forEach(function(w) { t += '\n' + w; });
+  b.notes.forEach(function(n)    { t += '\n' + n; });
   return t;
 }
-
-// ── GROQ AI (gratis, rapido) ─────────────────────────────────────────────
 
 async function estimateFood(desc, mealType) {
   if (!GROQ_KEY) return null;
 
-  const sys = [
-    'Eres nutricionista especializado en diabetes tipo 1 pediatrica.',
-    'Oriol tiene ~10 anos, usa bomba Tandem con Control-IQ y Humalog Junior.',
-    'Playbook: ratio bocata 1:8.5, split bocata 60/40 (50/50 si patio, 40/60 dia rojo).',
-    'Comidas con grasa alta: split 50/50 o 40/60 segun grasa.',
-    'Responde SOLO con JSON valido, sin texto extra.'
-  ].join(' ');
+  var sys = 'Eres nutricionista especializado en diabetes tipo 1 pediatrica. ' +
+    'Oriol tiene ~10 anos, usa bomba Tandem con Control-IQ y Humalog Junior. ' +
+    'Playbook: ratio bocata 1:8.5, split bocata 60/40 (50/50 si patio, 40/60 dia rojo). ' +
+    'Comidas con grasa alta: split 50/50 o 40/60. ' +
+    'Responde SOLO con JSON valido, sin texto extra.';
 
-  const usr = 'Comida: "' + desc + '" (' + mealType + '). ' +
+  var usr = 'Comida: "' + desc + '" (' + mealType + '). ' +
     'Devuelve: {"descripcion":"breve","HC_g":0,"HC_min":0,"HC_max":0,' +
     '"prot_g":0,"grasa_g":0,"velocidad":"rapida o lenta",' +
     '"split":"100/0 o 60/40 o 50/50 o 40/60",' +
     '"extension_min":0,"razon":"max 8 palabras","confianza":0.0}';
 
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       signal: AbortSignal.timeout(6000),
       headers: {
@@ -293,8 +301,8 @@ async function estimateFood(desc, mealType) {
         ]
       }), 'utf8')
     });
-    const data = await res.json();
-    const raw  = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '{}';
+    var data = await res.json();
+    var raw  = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : '{}';
     return JSON.parse(raw);
   } catch (e) {
     console.error('[Groq error]', e.message);
@@ -302,13 +310,11 @@ async function estimateFood(desc, mealType) {
   }
 }
 
-// ── TECLADOS ─────────────────────────────────────────────────────────────
-
 function foodKb(mealType) {
-  const foods = (oriol.comidas_rapidas && oriol.comidas_rapidas[mealType]) || [];
-  const rows  = [];
-  for (let i = 0; i < foods.length; i += 2) {
-    const row = [{ text: foods[i].nombre, callback_data: 'food_' + i }];
+  var foods = (oriol.comidas_rapidas && oriol.comidas_rapidas[mealType]) || [];
+  var rows  = [];
+  for (var i = 0; i < foods.length; i += 2) {
+    var row = [{ text: foods[i].nombre, callback_data: 'food_' + i }];
     if (foods[i + 1]) row.push({ text: foods[i + 1].nombre, callback_data: 'food_' + (i + 1) });
     rows.push(row);
   }
@@ -325,11 +331,11 @@ function foodKb(mealType) {
 }
 
 function fruitKb() {
-  const fr   = oriol.fruta_hc || {};
-  const ent  = Object.entries(fr);
-  const rows = [];
-  for (let i = 0; i < ent.length; i += 2) {
-    const row = [{ text: ent[i][0] + ' (' + ent[i][1] + 'g)', callback_data: 'fruit_' + ent[i][1] }];
+  var fr   = oriol.fruta_hc || {};
+  var ent  = Object.entries(fr);
+  var rows = [];
+  for (var i = 0; i < ent.length; i += 2) {
+    var row = [{ text: ent[i][0] + ' (' + ent[i][1] + 'g)', callback_data: 'fruit_' + ent[i][1] }];
     if (ent[i + 1]) row.push({ text: ent[i + 1][0] + ' (' + ent[i + 1][1] + 'g)', callback_data: 'fruit_' + ent[i + 1][1] });
     rows.push(row);
   }
@@ -344,13 +350,11 @@ function fruitKb() {
   return { inline_keyboard: rows };
 }
 
-const CONFIRM_KB = { inline_keyboard: [
+var CONFIRM_KB = { inline_keyboard: [
   [{ text: E.check + ' Ya me lo puse',  callback_data: 'confirmed_yes' },
    { text: '\u23F3 Ahora mismo',        callback_data: 'confirmed_now' }],
   [{ text: E.sos   + ' Necesito ayuda', callback_data: 'need_help'     }]
 ]};
-
-// ── TELEGRAM ─────────────────────────────────────────────────────────────
 
 function nsH() {
   return {
@@ -361,7 +365,7 @@ function nsH() {
 
 async function tg(method, params) {
   try {
-    const r = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/' + method, {
+    var r = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/' + method, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    Buffer.from(JSON.stringify(params), 'utf8')
@@ -374,101 +378,94 @@ async function tg(method, params) {
 }
 
 async function sendTG(text, kb) {
-  const p = { chat_id: CHAT_ID, text, parse_mode: 'HTML' };
+  var p = { chat_id: CHAT_ID, text: text, parse_mode: 'HTML' };
   if (kb) p.reply_markup = kb;
-  const r = await tg('sendMessage', p);
+  var r = await tg('sendMessage', p);
   return r && r.message_id ? r.message_id : null;
 }
 
 async function editTG(mid, text, kb) {
-  const p = { chat_id: CHAT_ID, message_id: mid, text, parse_mode: 'HTML' };
+  var p = { chat_id: CHAT_ID, message_id: mid, text: text, parse_mode: 'HTML' };
   if (kb) p.reply_markup = kb;
   await tg('editMessageText', p);
 }
 
 async function ack(id, text) {
-  await tg('answerCallbackQuery', { callback_query_id: id, text, show_alert: false });
+  await tg('answerCallbackQuery', { callback_query_id: id, text: text, show_alert: false });
 }
 
 async function getGlucose() {
   try {
-    const r = await fetch(NS_URL + '/api/v1/entries.json?count=1', { headers: nsH() });
-    const d = await r.json();
+    var r = await fetch(NS_URL + '/api/v1/entries.json?count=1', { headers: nsH() });
+    var d = await r.json();
     return d[0] || null;
   } catch (e) { return null; }
 }
 
 async function getBoluses(min) {
   try {
-    const since = new Date(Date.now() - min * 60000).toISOString();
-    const url   = NS_URL + '/api/v1/treatments.json?find[eventType]=Bolus&find[created_at][$gte]=' + since + '&count=5';
-    const r     = await fetch(url, { headers: nsH() });
+    var since = new Date(Date.now() - min * 60000).toISOString();
+    var url   = NS_URL + '/api/v1/treatments.json?find[eventType]=Bolus&find[created_at][$gte]=' + since + '&count=5';
+    var r     = await fetch(url, { headers: nsH() });
     return await r.json();
   } catch (e) { return []; }
 }
 
-// ── PROCESADOR DE UPDATES (webhook + comandos) ───────────────────────────
-
 async function processUpdate(update) {
 
-  // ── MENSAJES DE TEXTO ────────────────────────────────────────────────
-
   if (update.message) {
-    const text = (update.message.text || '').trim();
+    var text = (update.message.text || '').trim();
 
-    // Comando /bolo
-    if (text === '/bolo' || text.startsWith('/bolo@')) {
-      const gluc    = await getGlucose();
-      const sem     = evalSem(gluc && gluc.sgv, gluc && gluc.direction);
-      const hour    = new Date().getHours();
-      const mt      = getMealType(String(hour).padStart(2,'0') + ':00');
-      const gTxt    = gluc
+    if (text === '/bolo' || text.indexOf('/bolo@') === 0) {
+      var gluc    = await getGlucose();
+      var sem     = evalSem(gluc && gluc.sgv, gluc && gluc.direction);
+      var hour    = new Date().getHours();
+      var mt      = getMealType(String(hour).padStart(2,'0') + ':00');
+      var gTxt    = gluc
         ? semEmo(sem) + ' Glucosa: <b>' + gluc.sgv + ' mg/dL</b> ' + trendEmo(gluc.direction)
         : E.warn + ' Sin datos de glucosa';
-      let txt, kb, baseHC = 0;
+      var txt, kb, baseHC = 0;
 
       if (mt === 'comida') {
-        const menu = getTodayMenu();
+        var menu = getTodayMenu();
         baseHC = menu && menu.HC_g ? menu.HC_g : 0;
         txt = E.soccer + ' <b>LEO - Calculo de bolo</b>\n' + gTxt + '\n\n' +
           E.food + ' ' + (menu ? menu.descripcion : 'Sin menu registrado hoy') +
-          '\nHC base: ~' + baseHC + 'g\n\n' + 'Que fruta o postre come hoy?';
-        kb  = fruitKb();
+          '\nHC base: ~' + baseHC + 'g\n\nQue fruta o postre come hoy?';
+        kb = fruitKb();
       } else {
         txt = E.soccer + ' <b>LEO - Calculo de bolo</b>\n' + gTxt + '\n\nQue come Oriol?';
         kb  = foodKb(mt);
       }
 
-      const mid = await sendTG(txt, kb);
-      const key = 'manual_' + Date.now();
-      pending[key] = { triggeredAt: new Date(), warned: false, resolved: false, messageId: mid, glucoseData: gluc, mealType: mt, baseHC, sem };
+      var mid = await sendTG(txt, kb);
+      var key = 'manual_' + Date.now();
+      pending[key] = { triggeredAt: new Date(), warned: false, resolved: false, messageId: mid, glucoseData: gluc, mealType: mt, baseHC: baseHC, sem: sem };
       return;
     }
 
-    // Comando /goles
-    if (text === ‘/goles’ || text.startsWith(‘/goles@‘)) {
-      const msg = Object.keys(points).length === 0
+    if (text === '/goles' || text.indexOf('/goles@') === 0) {
+      var msg = Object.keys(points).length === 0
         ? E.trophy + ' <b>Marcador LEO</b>\n\nConfirma el primer bolo para empezar!'
-        : E.trophy + ' <b>Marcador LEO</b>\n\n' + Object.values(points).map(function(p){ return E.soccer + ' ' + p.name + ': <b>' + p.total + ' goles</b>'; }).join('\n');
+        : E.trophy + ' <b>Marcador LEO</b>\n\n' + Object.values(points).map(function(p) {
+            return E.soccer + ' ' + p.name + ': <b>' + p.total + ' goles</b>';
+          }).join('\n');
       await sendTG(msg);
       return;
     }
 
-    // Respuesta a input esperado
     if (waitingInput) {
-      const ctx = waitingInput;
-      const num = parseFloat(text.replace(',', '.'));
+      var ctx = waitingInput;
+      var num = parseFloat(text.replace(',', '.'));
       waitingInput = null;
 
       if (!isNaN(num) && num >= 0 && num <= 400) {
-        // Numero directo de HC
-        const hour = new Date().getHours();
-        const b    = calcBolus(ctx.glucoseData && ctx.glucoseData.sgv, ctx.glucoseData && ctx.glucoseData.direction, num, 0, hour, ctx.mealType, null);
-        await sendTG(E.pencil + ' <b>' + num + 'g HC</b>\n\n' + bolusText(b, num) + '\n\nConfirmas el bolo?', CONFIRM_KB);
+        var hour2 = new Date().getHours();
+        var b2    = calcBolus(ctx.glucoseData && ctx.glucoseData.sgv, ctx.glucoseData && ctx.glucoseData.direction, num, 0, hour2, ctx.mealType, null);
+        await sendTG(E.pencil + ' <b>' + num + 'g HC</b>\n\n' + bolusText(b2, num) + '\n\nConfirmas el bolo?', CONFIRM_KB);
       } else {
-        // Descripcion libre - llamar a Groq
         await sendTG(E.robot + ' Analizando la comida...');
-        const est = await estimateFood(text, ctx.mealType);
+        var est = await estimateFood(text, ctx.mealType);
 
         if (!est) {
           await sendTG(E.warn + ' No pude estimar esa comida. Escribe los gramos de HC directamente (ej: <b>45</b>)');
@@ -476,76 +473,63 @@ async function processUpdate(update) {
           return;
         }
 
-        const hour = new Date().getHours();
-        const food = {
-          HC_g:         est.HC_g,
-          prot_g:       est.prot_g,
-          grasa_g:      est.grasa_g,
-          split:        est.split,
-          extension_min: est.extension_min,
-          notas:        est.razon
+        var hour3 = new Date().getHours();
+        var food3 = {
+          HC_g: est.HC_g, prot_g: est.prot_g, grasa_g: est.grasa_g,
+          split: est.split, extension_min: est.extension_min, notas: est.razon
         };
-        const b = calcBolus(
-          ctx.glucoseData && ctx.glucoseData.sgv,
-          ctx.glucoseData && ctx.glucoseData.direction,
-          est.HC_g, 0, hour, ctx.mealType, food
-        );
-
-        let txt = E.robot + ' <b>' + est.descripcion + '</b>\n';
-        txt += 'HC: <b>~' + est.HC_g + 'g</b> (rango ' + est.HC_min + '-' + est.HC_max + 'g)';
-        txt += ' | Prot: ' + est.prot_g + 'g | Grasa: ' + est.grasa_g + 'g\n';
-        txt += 'Absorcion: ' + (est.velocidad === 'rapida' ? '\u26A1 Rapida' : '\uD83D\uDC22 Lenta');
-        if (est.confianza < 0.7) txt += '\n' + E.warn + ' Estimacion con poca certeza - revisa';
-        txt += '\n\n' + bolusText(b, est.HC_g) + '\n\nConfirmas el bolo?';
-
-        await sendTG(txt, CONFIRM_KB);
+        var b3  = calcBolus(ctx.glucoseData && ctx.glucoseData.sgv, ctx.glucoseData && ctx.glucoseData.direction, est.HC_g, 0, hour3, ctx.mealType, food3);
+        var txt3 = E.robot + ' <b>' + est.descripcion + '</b>\n' +
+          'HC: <b>~' + est.HC_g + 'g</b> (rango ' + est.HC_min + '-' + est.HC_max + 'g)' +
+          ' | Prot: ' + est.prot_g + 'g | Grasa: ' + est.grasa_g + 'g\n' +
+          'Absorcion: ' + (est.velocidad === 'rapida' ? '\u26A1 Rapida' : '\uD83D\uDC22 Lenta');
+        if (est.confianza < 0.7) txt3 += '\n' + E.warn + ' Estimacion con poca certeza - revisa';
+        txt3 += '\n\n' + bolusText(b3, est.HC_g) + '\n\nConfirmas el bolo?';
+        await sendTG(txt3, CONFIRM_KB);
       }
       return;
     }
   }
 
-  // ── CALLBACKS DE BOTONES ─────────────────────────────────────────────
-
   if (update.callback_query) {
-    const cb   = update.callback_query;
-    const data = cb.data;
-    const name = (cb.from && cb.from.first_name) || 'Oriol';
-    const uid  = cb.from && cb.from.id;
-    const mid  = cb.message && cb.message.message_id;
+    var cb   = update.callback_query;
+    var data = cb.data;
+    var name = (cb.from && cb.from.first_name) || 'Oriol';
+    var uid  = cb.from && cb.from.id;
+    var mid2 = cb.message && cb.message.message_id;
 
-    // Encontrar el reminder activo mas reciente
-    const rem = Object.values(pending)
-      .sort(function(a,b){ return b.triggeredAt - a.triggeredAt; })
-      .find(function(r){ return !r.resolved; });
+    var rem = Object.values(pending)
+      .sort(function(a, b) { return b.triggeredAt - a.triggeredAt; })
+      .find(function(r) { return !r.resolved; });
 
     if (data === 'confirmed_yes') {
       await ack(cb.id, E.check + ' Anotado!');
-      const total = addGoles(uid, name, 10);
+      var total = addGoles(uid, name, 1);
       if (rem) rem.resolved = true;
-      await editTG(mid, randFootball() + '\n\n<b>' + name + '</b> confirmo el bolo ' + E.check + '\n' + E.trophy + ' +1 gol - Total: ' + total + ' goles');
+      await editTG(mid2, randFootball() + '\n\n<b>' + name + '</b> confirmo el bolo ' + E.check + '\n' + E.trophy + ' +1 gol - Total: ' + total + ' goles');
 
     } else if (data === 'confirmed_now') {
       await ack(cb.id, '\u23F3 Venga!');
-      await editTG(mid, '\u23F3 <b>' + name + '</b> se lo esta poniendo ahora...');
+      await editTG(mid2, '\u23F3 <b>' + name + '</b> se lo esta poniendo ahora...');
 
     } else if (data === 'not_eating') {
       await ack(cb.id, 'Anotado');
       if (rem) rem.resolved = true;
-      await editTG(mid, '<b>' + name + '</b>: no come todavia. Recordatorio cancelado.');
+      await editTG(mid2, '<b>' + name + '</b>: no come todavia. Recordatorio cancelado.');
 
     } else if (data === 'need_help') {
       await ack(cb.id, E.sos + ' Avisando...');
       if (rem) rem.resolved = true;
-      await editTG(mid,
-        E.sos + ' <b>PADRES - ATENCION URGENTE</b>\n\n<b>' + name + '</b> necesita ayuda ahora.\n\uD83D\uDCDE Llamadle inmediatamente.'
-      );
+      await editTG(mid2, E.sos + ' <b>PADRES - ATENCION URGENTE</b>\n\n<b>' + name + '</b> necesita ayuda ahora.\n\uD83D\uDCDE Llamadle inmediatamente.');
 
     } else if (data === 'show_points') {
-      await ack(cb.id, E.trophy);
-      const msg = Object.keys(points).length === 0
+      await ack(cb.id, E.trophy + ' Marcador');
+      var msg2 = Object.keys(points).length === 0
         ? E.trophy + ' <b>Marcador LEO</b>\n\nConfirma el primer bolo!'
-        : E.trophy + ' <b>Marcador LEO</b>\n\n' + Object.values(points).map(function(p){ return E.soccer + ' ' + p.name + ': <b>' + p.total + ' pts</b>'; }).join('\n');
-      await sendTG(msg);
+        : E.trophy + ' <b>Marcador LEO</b>\n\n' + Object.values(points).map(function(p) {
+            return E.soccer + ' ' + p.name + ': <b>' + p.total + ' goles</b>';
+          }).join('\n');
+      await sendTG(msg2);
 
     } else if (data === 'food_describe') {
       await ack(cb.id, E.robot + ' Describir');
@@ -557,7 +541,7 @@ async function processUpdate(update) {
       await sendTG(
         E.robot + ' <b>Describe la comida de Oriol</b>\n\n' +
         'Escribe que va a comer con cantidad aproximada.\n' +
-        'Ej: <i>"bocata de lomo embuchado mediano"</i>\n\n' +
+        'Ej: bocata de lomo embuchado mediano\n\n' +
         'O escribe directamente los gramos de HC (ej: <b>45</b>)'
       );
 
@@ -570,18 +554,17 @@ async function processUpdate(update) {
       };
       await sendTG(E.pencil + ' Cuantos gramos de HC va a comer Oriol?\nEscribe solo el numero (ej: <b>45</b>)');
 
-    } else if (data.startsWith('food_')) {
-      const idx  = parseInt(data.replace('food_', ''));
-      const mt   = (rem && rem.mealType) || 'desayuno';
-      const list = (oriol.comidas_rapidas && oriol.comidas_rapidas[mt]) || [];
-      const food = list[idx];
+    } else if (data.indexOf('food_') === 0) {
+      var idx  = parseInt(data.replace('food_', ''));
+      var mt2  = (rem && rem.mealType) || 'desayuno';
+      var list = (oriol.comidas_rapidas && oriol.comidas_rapidas[mt2]) || [];
+      var food = list[idx];
       if (!food) { await ack(cb.id, '?'); return; }
 
       await ack(cb.id, food.nombre);
 
-      // Nutella - protocolo especial
       if (food.split === 'NUTELLA') {
-        await editTG(mid,
+        await editTG(mid2,
           E.warn + ' <b>NUTELLA - PROTOCOLO ESPECIAL</b>\n\n' +
           '100g Nutella = ~53g HC\n\n' +
           'NO bolo normal - bolo parcial segun cantidad exacta\n' +
@@ -591,83 +574,87 @@ async function processUpdate(update) {
         return;
       }
 
-      // Cena sin HC
       if (food.HC_g === 0 && food.prot_g > 15) {
-        let txt2 = E.food + ' <b>' + food.nombre + '</b>\nHC: 0g - sin bolo de comida necesario.';
-        if (food.prot_g > 20) txt2 += '\n' + E.warn + ' Alta proteina: puede subir glucosa en 2-3h.';
-        await editTG(mid, txt2, CONFIRM_KB);
+        var txt4 = E.food + ' <b>' + food.nombre + '</b>\nHC: 0g - sin bolo de comida necesario.';
+        if (food.prot_g > 20) txt4 += '\n' + E.warn + ' Alta proteina: puede subir glucosa en 2-3h.';
+        await editTG(mid2, txt4, CONFIRM_KB);
         return;
       }
 
-      const hour = new Date().getHours();
-      const b    = calcBolus(
+      var hour4 = new Date().getHours();
+      var b4    = calcBolus(
         rem && rem.glucoseData && rem.glucoseData.sgv,
         rem && rem.glucoseData && rem.glucoseData.direction,
-        food.HC_g, 0, hour, mt, food
+        food.HC_g, 0, hour4, mt2, food
       );
-      const txt3 = E.food + ' <b>' + food.nombre + '</b>\n' +
+      await editTG(mid2,
+        E.food + ' <b>' + food.nombre + '</b>\n' +
         'HC: ' + food.HC_g + 'g | Prot: ' + food.prot_g + 'g | Grasa: ' + food.grasa_g + 'g\n\n' +
-        bolusText(b, food.HC_g) + '\n\nConfirmas el bolo?';
-      await editTG(mid, txt3, CONFIRM_KB);
+        bolusText(b4, food.HC_g) + '\n\nConfirmas el bolo?',
+        CONFIRM_KB
+      );
 
-    } else if (data.startsWith('fruit_')) {
-      const fHC   = parseInt(data.replace('fruit_', ''));
-      const bHC   = (rem && rem.baseHC) ? rem.baseHC : 0;
-      const total = bHC + fHC;
+    } else if (data.indexOf('fruit_') === 0) {
+      var fHC   = parseInt(data.replace('fruit_', ''));
+      var bHC   = (rem && rem.baseHC) ? rem.baseHC : 0;
+      var total2 = bHC + fHC;
       await ack(cb.id, fHC > 0 ? '+' + fHC + 'g postre' : 'Sin postre');
 
-      const hour = new Date().getHours();
-      const b    = calcBolus(
+      var hour5 = new Date().getHours();
+      var b5    = calcBolus(
         rem && rem.glucoseData && rem.glucoseData.sgv,
         rem && rem.glucoseData && rem.glucoseData.direction,
-        total, 0, hour, 'comida', null
+        total2, 0, hour5, 'comida', null
       );
-      const txt4 = E.food + ' <b>Comida completa - ' + total + 'g HC</b>\n' +
+      await editTG(mid2,
+        E.food + ' <b>Comida completa - ' + total2 + 'g HC</b>\n' +
         '(Menu: ' + bHC + 'g + postre: ' + fHC + 'g)\n\n' +
-        bolusText(b, total) + '\n\nConfirmas el bolo?';
-      await editTG(mid, txt4, CONFIRM_KB);
+        bolusText(b5, total2) + '\n\nConfirmas el bolo?',
+        CONFIRM_KB
+      );
     }
   }
 }
 
-// ── CRON: RECORDATORIOS ──────────────────────────────────────────────────
-
 cron.schedule('* * * * *', async function() {
-  const now  = new Date();
-  const h    = now.getHours();
-  const tStr = String(h).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  var now  = new Date();
+  var h    = now.getHours();
+  var tStr = String(h).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 
-  if (REMINDER_TIMES.includes(tStr) && !pending[tStr]) {
-    const gluc = await getGlucose();
-    const sem  = evalSem(gluc && gluc.sgv, gluc && gluc.direction);
-    const mt   = getMealType(tStr);
-    const gTxt = gluc
+  if (REMINDER_TIMES.indexOf(tStr) >= 0 && !pending[tStr]) {
+    var gluc = await getGlucose();
+    var sem  = evalSem(gluc && gluc.sgv, gluc && gluc.direction);
+    var mt   = getMealType(tStr);
+    var gTxt = gluc
       ? semEmo(sem) + ' Glucosa: <b>' + gluc.sgv + ' mg/dL</b> ' + trendEmo(gluc.direction)
       : E.warn + ' Sin datos de glucosa';
 
-    let txt, kb, baseHC = 0;
+    var txt, kb, baseHC = 0;
 
     if (mt === 'comida') {
-      const menu = getTodayMenu();
+      var menu = getTodayMenu();
       baseHC = menu && menu.HC_g ? menu.HC_g : 0;
       txt = E.soccer + ' <b>LEO - Comida ' + tStr + '</b>\n' + gTxt + '\n\n' +
         E.food + ' ' + (menu ? menu.descripcion : 'Sin menu registrado hoy') +
         '\nHC base: ~' + baseHC + 'g\n\nQue fruta o postre come hoy Oriol?';
       kb = fruitKb();
     } else {
-      const names = { desayuno:'Desayuno', esmorzar:'Esmorzar', merienda:'Merienda', cena:'Cena' };
+      var names = { desayuno:'Desayuno', esmorzar:'Esmorzar', merienda:'Merienda', cena:'Cena' };
       txt = E.soccer + ' <b>LEO - ' + (names[mt] || mt) + ' ' + tStr + '</b>\n' + gTxt + '\n\nQue come Oriol?';
       kb  = foodKb(mt);
     }
 
-    const mid = await sendTG(txt, kb);
-    pending[tStr] = { triggeredAt: now, warned: false, resolved: false, messageId: mid, glucoseData: gluc, mealType: mt, baseHC, sem };
+    var mid = await sendTG(txt, kb);
+    pending[tStr] = {
+      triggeredAt: now, warned: false, resolved: false,
+      messageId: mid, glucoseData: gluc, mealType: mt, baseHC: baseHC, sem: sem
+    };
     console.log('[' + tStr + '] ' + mt + ' | G:' + (gluc ? gluc.sgv : '?'));
   }
 
-  // Vigilar bolo en bomba + escalar si no hay respuesta
-  for (var t in pending) {
-    var r = pending[t];
+  var keys = Object.keys(pending);
+  for (var i = 0; i < keys.length; i++) {
+    var r = pending[keys[i]];
     if (r.resolved) continue;
     var mins = (now - r.triggeredAt) / 60000;
     var bols = await getBoluses(WINDOW_MIN);
@@ -689,15 +676,15 @@ cron.schedule('* * * * *', async function() {
     }
   }
 
-  // Limpieza
-  for (var k in pending) {
-    if (pending[k].resolved && (now - pending[k].triggeredAt) > 7200000) delete pending[k];
+  var allKeys = Object.keys(pending);
+  for (var j = 0; j < allKeys.length; j++) {
+    if (pending[allKeys[j]].resolved && (now - pending[allKeys[j]].triggeredAt) > 7200000) {
+      delete pending[allKeys[j]];
+    }
   }
 });
 
-// ── WEBHOOK HTTP SERVER ──────────────────────────────────────────────────
-
-const server = http.createServer(function(req, res) {
+var server = http.createServer(function(req, res) {
   if (req.method === 'POST' && req.url === '/webhook') {
     var body = '';
     req.on('data', function(chunk) { body += chunk.toString(); });
@@ -721,6 +708,6 @@ server.listen(PORT, function() {
   console.log('\u2705 LEO activo en puerto ' + PORT);
   console.log('Perfil: ' + (isWeekend() ? 'FINDE' : 'SEMANA'));
   console.log('Recordatorios: ' + REMINDER_TIMES.join(', '));
-  console.log('Groq AI: ' + (GROQ_KEY ? 'SI' : 'NO configurado - usa /bolo > Indicar HC'));
+  console.log('Groq AI: ' + (GROQ_KEY ? 'SI' : 'NO - usa Indicar HC'));
   console.log('Webhook: POST /webhook');
 });
