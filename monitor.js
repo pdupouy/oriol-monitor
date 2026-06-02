@@ -320,7 +320,7 @@ function foodKb(mealType) {
     { text: E.check + ' Ya bole',        callback_data: 'confirmed_yes' },
     { text: E.sos   + ' Necesito ayuda', callback_data: 'need_help'     }
   ]);
-  rows.push([{ text: E.trophy + ' Ver g’oles, callback_data: 'show_points' }]);
+  rows.push([{ text: E.trophy + ' Ver goles', callback_data: 'show_points' }]);
   return { inline_keyboard: rows };
 }
 
